@@ -1,71 +1,143 @@
 # Scalable, Agnostic Notification Engine HLD
 
+---
 
 ## Table of Contents
 
-1. [Overview & Context](#overview--context)
-2. [Goals, Scope & Non-Goals](#goals-scope--non-goals)
-3. [High-Level Architecture](#high-level-architecture)
-4. [Core Concepts & Domain Model](#core-concepts--domain-model)
-5. [API Design & Contracts](#api-design--contracts)
-6. [Notification Lifecycle & Flows](#notification-lifecycle--flows)
-7. [Routing, Personalization & Preferences](#routing-personalization--preferences)
-8. [Scalability & Performance](#scalability--performance)
-9. [Reliability, Error Handling & Retries](#reliability-error-handling--retries)
-10. [Security, Privacy & Compliance](#security-privacy--compliance)
-11. [Observability & Operational Concerns](#observability--operational-concerns)
-12. [Extensibility & Multi-Tenancy](#extensibility--multi-tenancy)
-13. [Trade-offs & Alternatives Considered](#trade-offs--alternatives-considered)
-14. [Assumptions & Open Questions](#assumptions--open-questions)
-15. [Appendix: Implementation Notes](#appendix-implementation-notes)
+1. [Problem Context & Requirements Recap](#problem-context--requirements-recap)
+2. [Assumptions](#assumptions)
+3. [Architecture Overview](#architecture-overview)
+4. [Key Architectural Decisions & Trade-offs](#key-architectural-decisions--trade-offs)
+5. [Core Domain Model](#core-domain-model)
+6. [Detailed System Design](#detailed-system-design)
+   - [Unified Notification API (Agnostic Interface)](#unified-notification-api-agnostic-interface)
+   - [Orchestration & Routing](#orchestration--routing)
+   - [Templating & Personalization](#templating--personalization)
+   - [User Preferences Service](#user-preferences-service)
+   - [Channel Services & Third-Party Provider Integrations](#channel-services--third-party-provider-integrations)
+   - [Async Processing & Queues](#async-processing--queues)
+   - [Data Storage](#data-storage)
+7. [Scalability & Performance](#scalability--performance)
+8. [Reliability, Fault Tolerance & Delivery Semantics](#reliability-fault-tolerance--delivery-semantics)
+9. [Security, Privacy & Compliance](#security-privacy--compliance)
+10. [Observability & Operational Excellence](#observability--operational-excellence)
+11. [Extensibility & Multi-Tenancy](#extensibility--multi-tenancy)
+12. [Risks, Limitations & Future Enhancements](#risks-limitations--future-enhancements)
+13. [Appendix A: Sequence Diagrams](#appendix-a-sequence-diagrams)
+14. [Appendix B: Configuration Examples](#appendix-b-configuration-examples)
+15. [Appendix C: Implementation Sketch](#appendix-c-implementation-sketch)
 
 ---
 
-## Overview & Context
+## Problem Context & Requirements Recap
 
-- **What**: A centralized, channel-agnostic notification engine.
-- **Who**: Internal producer services (billing, insights, alerts) and external utility customers.
-- **Why**: Remove siloed notification logic, provide consistent, scalable, and reliable delivery.
+### Business & System Context
 
-> TODO: To briefly summarize context and notification use-cases.
+> TODO: Summarize the requirement to send large-scale, multi-channel notifications
+> (email, SMS, paper, future push), and the current siloed pain points.
 
----
+### Functional Requirements (High-Level)
 
-## Goals, Scope & Non-Goals
+> TODO: Bullet list – multi-channel, preference-aware routing, fallbacks,
+> unified API, provider integration, paper notification support, etc.
 
-### Functional Goals
+### Non-Functional Requirements
 
-- TODO: To list key functional objectives (multi-channel notifications, routing, etc.)
+- **Scalability**: Handle millions of notifications per day.
+- **Reliability**: Avoid drops/duplicates, robust retry & recovery.
+- **Performance**: Bounded end-to-end latency per channel.
+- **Maintainability**: Clean boundaries, pluggable channels/providers.
+- **Security & Compliance**: PII, consent, regulatory constraints.
 
-### Non-Functional Goals
-
-- TODO: Scalability, reliability, extensibility, observability, etc.
-
-### Non-Goals / Out of Scope
-
-- TODO: To list what is explicitly not covered by this design.
+> TODO: Refine and expand as needed.
 
 ---
 
-## High-Level Architecture
+## Assumptions
 
-This section provides a bird’s-eye view of the system components and their interactions.
+> This section explicitly calls out assumptions to ground the design.
 
-### Architecture Overview
+- **A1**: TODO (e.g. upstream services can tolerate async delivery.)
+- **A2**: TODO (e.g. delivery guarantees: at-least-once vs exactly-once.)
+- **A3**: TODO (e.g. expected daily/peak notification volumes.)
+- **A4**: TODO (e.g. providers support webhooks for delivery status.)
+- **A5**: TODO (e.g. single cloud region vs multi-region initial rollout.)
 
-> TODO: Describe major components and their responsibilities at a high level.
+> TODO: Add/adjust assumptions as needed.
+
+---
+
+## Architecture Overview
+
+This section provides a bird’s-eye view of the system and its main components.
+
+### Narrative Overview
+
+> TODO: Describe how producer systems interact with the notification engine,
+> and how the engine routes and delivers notifications via multiple channels.
 
 ### Diagram: High-Level System Architecture
 
 ![High-Level Architecture](./diagrams/high-level-architecture.svg)
 
-> TODO: attach diagram
+> TODO: Include a diagram showing:
+> - Producer Systems (Billing, Insights, Alerts, etc.)
+> - Unified Notification API / Gateway
+> - Orchestration / Router
+> - Template Service
+> - User Preferences Service
+> - Channel Services (Email, SMS, Paper, Push)
+> - Third-Party Providers
+> - Observability & Data Stores (at a high level)
 
 ---
 
-## Core Concepts & Domain Model
+## Key Architectural Decisions & Trade-offs
 
-### Core Domain Concepts
+For each decision:
+
+- **Decision** – the choice made  
+- **Context** – the problem/pressure  
+- **Options** – alternatives considered  
+- **Rationale** – why chosen (pros vs cons)  
+- **Implications** – performance, reliability, complexity, team impact  
+
+### D1: Event-Driven Asynchronous Pipeline vs Synchronous Delivery
+
+> TODO
+
+### D2: Channel-Agnostic Core with Pluggable Channel Adapters
+
+> TODO
+
+### D3: Queueing Strategy (Per-Channel / Per-Priority / Per-Tenant)
+
+> TODO
+
+### D4: Rules Engine vs Config-Driven Routing
+
+> TODO
+
+### D5: Delivery Semantics (At-Least-Once with Idempotency vs Exactly-Once)
+
+> TODO
+
+### D6: Data Storage Choices (Relational vs NoSQL vs Specialized Stores)
+
+> TODO
+
+### D7: Multi-Provider Strategy (Active-Active vs Active-Passive)
+
+> TODO
+
+> TODO: Add any other key decisions (e.g. microservices vs modular monolith,
+> synchronous reads for preferences vs cached/eventual-consistent, etc.)
+
+---
+
+## Core Domain Model
+
+### Core Concepts
 
 - **Notification** – TODO
 - **NotificationType** – TODO
@@ -74,70 +146,137 @@ This section provides a bird’s-eye view of the system components and their int
 - **NotificationTemplate** – TODO
 - **NotificationChannelAttempt** – TODO
 - **ProviderConfig** – TODO
+- **NotificationEvent / AuditLog** – TODO
 
 ### Diagram: Domain Model / ER
 
 ![Domain Model ER](./diagrams/domain-model-er.svg)
 
-> TODO: Describe the relationships between entities.
+> TODO: Show relationships:
+> - User ↔ UserPreference
+> - NotificationType ↔ NotificationTemplate
+> - NotificationRequest ↔ NotificationChannelAttempt
+> - ChannelAttempt ↔ ProviderConfig
+> - Notification ↔ AuditLog / Events
 
 ---
 
-## API Design & Contracts
+## Detailed System Design
 
-### External (Producer-Facing) APIs
+This section zooms into each major subsystem.
 
-> TODO: Define the main public API(s) – e.g. `POST /v1/notifications`.
+### Unified Notification API (Agnostic Interface)
 
-### Internal Service APIs
+> Responsibilities:
+> - Provide a unified interface for all producer systems.
+> - Accept notification requests without exposing channel/provider details.
+> - Validate & normalize requests.
+> - Enforce API-level rate limits and authentication.
+> - Generate idempotency keys and write initial audit records.
+> - Publish events into the orchestration pipeline.
 
-> TODO: Template service, preference service, channel services, etc.
+#### External API Contract
 
-### Idempotency & Versioning
+> TODO: Define `POST /v1/notifications` (and any others) with payload shape, idempotency, responses.
 
-> TODO: Strategy for idempotent requests and API versioning.
-
-### Diagram: API Flow
+#### Diagram: API Flow
 
 ![API Flow](./diagrams/api-flow.svg)
 
-> TODO: Show how a request flows through the system.
+> TODO: Show how a request travels from producer → API gateway → validation →
+> publishing to the event/queue layer.
 
 ---
 
-## Notification Lifecycle & Flows
+### Orchestration & Routing
 
-### End-to-End Flow
+> Responsibilities:
+> - Resolve user preferences and tenant-level defaults.
+> - Determine eligible channels and channel priority/fallbacks.
+> - Split a logical notification into one or more channel attempts.
+> - Apply throttling / blackout windows / regulatory rules.
+> - Persist routing decisions for observability & audit.
 
-> TODO: Step-by-step lifecycle from trigger to delivery confirmation.
-
-### Diagram: Sequence – Send Notification
-
-![Sequence – Send Notification](./diagrams/sequence-send-notification.svg)
-
-> TODO: Explain each step briefly.
-
-### Diagram (Optional): Sequence – Failure & Fallback
-
-![Sequence – Failure & Fallback](./diagrams/sequence-failure-fallback.svg)
-
-> TODO: Explain how retry and fallback channels are handled.
+> TODO: Describe:
+> - Routing algorithm.
+> - Representation of routing rules (e.g. config or rules engine).
+> - Interaction with preferences & template services.
 
 ---
 
-## Routing, Personalization & Preferences
+### Templating & Personalization
 
-### User Preferences
+> Responsibilities:
+> - Manage notification templates per channel, per locale, per tenant.
+> - Render personalized content from data payload and user context.
+> - Support versioning, AB testing, and preview/sandbox modes.
 
-> TODO: How preferences are stored, read, and applied.
+> TODO: Describe:
+> - Template model.
+> - Rendering flow (sync vs async, caching strategy).
+> - Handling of failures in templating.
 
-### Channel Routing & Fallback
+---
 
-> TODO: Rules for selecting channels and fallback strategies.
+### User Preferences Service
 
-### Personalization & Templating
+> Responsibilities:
+> - Store user-level & tenant-level preferences.
+> - Provide low-latency reads for routing decisions.
+> - Manage opt-in/opt-out, DND windows, channel priorities.
 
-> TODO: How dynamic content is rendered per user and per channel.
+> TODO: Describe:
+> - Data model for preferences.
+> - Read/write characteristics, caching, consistency model.
+> - How updates propagate (events vs direct reads).
+
+---
+
+### Channel Services & Third-Party Provider Integrations
+
+> Responsibilities:
+> - Channel-specific logic (Email, SMS, Paper, Push).
+> - Normalize provider responses and abstract provider-specific APIs.
+> - Implement provider-specific throttling, retries, and failover logic.
+
+> TODO: Describe:
+> - Adapter/driver model.
+> - Multi-provider strategy per channel.
+> - Backoff & failover behavior.
+
+---
+
+### Async Processing & Queues
+
+> Responsibilities:
+> - Decouple ingress from downstream delivery.
+> - Buffer and throttle load per channel and per tenant.
+> - Enable prioritized processing for critical notifications.
+
+> TODO: Describe:
+> - Queue structure (e.g. per-channel, per-priority).
+> - Worker model and scaling behavior.
+> - DLQ usage for poison/failing messages.
+
+### Diagram: Scalability / Data Flow
+
+![Scalability Data Flow](./diagrams/scalability-data-flow.svg)
+
+> TODO: Show event/queue topology and how workers scale horizontally.
+
+---
+
+### Data Storage
+
+> Responsibilities:
+> - Persist templates, preferences, and provider configs.
+> - Store notification logs and audit events.
+> - Support reporting and debugging without exposing sensitive content.
+
+> TODO: Describe:
+> - Chosen storage types (relational / NoSQL / time-series / cache).
+> - Partitioning/sharding strategy.
+> - Data retention & archival.
 
 ---
 
@@ -145,53 +284,46 @@ This section provides a bird’s-eye view of the system components and their int
 
 ### Workload Characteristics
 
-> TODO: Millions of notifications/day, peak loads, etc.
+> TODO: Expected daily and peak load, distribution across channels, typical payload sizes.
 
-### Queuing & Worker Model
+### Scaling Strategies
 
-> TODO: Per-channel queues, priorities, sharding strategy.
+- Horizontal scaling of API tier.
+- Horizontal scaling of workers per queue/channel.
+- Sharding by tenant, region, or user range.
+- Backpressure handling when providers slow down.
 
-### Throttling & Rate Limiting
+> TODO: Elaborate each with expected behavior under load.
 
-> TODO: User-level, tenant-level, provider-level rate limits.
+### Performance Considerations
 
-### Diagram: Scalability / Data Flow
-
-![Scalability Data Flow](./diagrams/scalability-data-flow.svg)
-
-> TODO: Explain how the system scales horizontally.
-
-### Diagram (Optional): Deployment Topology
-
-![Deployment Topology](./diagrams/deployment-topology.svg)
-
-> TODO: Show services, queues, and data stores across environments/regions.
+> TODO: End-to-end latency targets per channel, template caching, batching where applicable (e.g. paper).
 
 ---
 
-## Reliability, Error Handling & Retries
+## Reliability, Fault Tolerance & Delivery Semantics
 
 ### Failure Modes
 
-> TODO: List transient vs permanent failures (provider downtime, bounces, etc.)
+> TODO: Enumerate provider outages, network partitions, internal service failures, etc.
 
-### Retry Strategy
+### Delivery Semantics & Idempotency
 
-> TODO: Exponential backoff, max attempts, jitter.
+> TODO: Define at-least-once semantics + idempotency keys & dedupe strategy.
 
-### Idempotency & Deduplication
+### Retry & Backoff
 
-> TODO: Idempotency keys and dedupe storage.
+> TODO: Global strategy (exponential backoff with jitter, per-channel policies).
 
 ### Dead-Letter Queues & Replay
 
-> TODO: DLQ usage and operational procedures.
+> TODO: DLQ flow, operational procedures for replaying messages safely.
 
 ### Diagram: Notification State Machine
 
 ![Notification State Machine](./diagrams/notification-state-machine.svg)
 
-> TODO: Explain state transitions and terminal states.
+> TODO: Show states like CREATED, ROUTED, RENDERED, SENT, DELIVERED, FAILED, RETRY_PENDING, DLQ.
 
 ---
 
@@ -199,41 +331,41 @@ This section provides a bird’s-eye view of the system components and their int
 
 ### Data Classification & Minimization
 
-> TODO: Which data is sensitive and how it is minimized/logged.
+> TODO: Identify PII and other sensitive data, and show how logging is sanitized.
 
 ### Encryption & Transport Security
 
-> TODO: TLS in transit, encryption at rest, KMS usage.
+> TODO: TLS, encryption at rest, key management, secret storage.
 
-### Identity, Access Control & Audit
+### Identity & Access Control
 
-> TODO: RBAC around templates, logs, admin operations.
+> TODO: RBAC for accessing templates, logs, and admin APIs; least-privilege for services.
 
-### Consent, Opt-Out & Regulatory Compliance
+### Consent, Opt-Out & Regulatory Needs
 
-> TODO: Handling unsubscribe, SMS consent, data retention, deletion.
+> TODO: Handling unsubscribe/opt-out, SMS consent, data retention & “right to be forgotten”.
 
 ---
 
-## Observability & Operational Concerns
+## Observability & Operational Excellence
 
 ### Metrics
 
-> TODO: Key metrics (latency, throughput, delivery rate, bounce rate, etc.)
+> TODO: Define core metrics: request rate, queue depth, success/failure rates, latency (p95/p99), bounce rates, etc.
 
 ### Logging & Tracing
 
-> TODO: Structured logs and distributed tracing.
+> TODO: Structured logs, correlation IDs, distributed tracing approach.
 
-### Alerts & SLOs
+### SLOs & Alerting
 
-> TODO: Example SLOs & the alerts tied to them.
+> TODO: Proposed SLOs (e.g. 99.9% of notifications routed within X ms), and what alerts trigger on-call.
 
 ### (Optional) Diagram: Observability Flow
 
 ![Observability Flow](./diagrams/observability-flow.svg)
 
-> TODO: Show how logs/metrics/traces are collected & visualized.
+> TODO: Show how logs/metrics/traces are emitted and consumed.
 
 ---
 
@@ -241,50 +373,66 @@ This section provides a bird’s-eye view of the system components and their int
 
 ### Adding New Channels
 
-> TODO: Plugin/adapter model for channels and providers.
+> TODO: Plugin model; steps required to add a new channel with minimal core changes.
 
-### Tenant Isolation & Configuration
+### Tenant Isolation
 
-> TODO: Per-utility routing rules, templates, preferences.
+> TODO: How different utilities get isolated configs, templates, routing rules, quotas.
 
 ### Schema & Config Evolution
 
-> TODO: How the system handles evolving templates, preferences and routing rules.
+> TODO: How template/preference schemas and routing rules evolve without downtime.
 
 ---
 
-## Trade-offs & Alternatives Considered
+## Risks, Limitations & Future Enhancements
 
-> TODO: Summarize design decisions and rationale.
+### Known Risks & Limitations
 
-Examples:
-- Event-driven vs synchronous processing
-- Rules engine vs static configuration
-- Single queue vs multiple queues
-- Microservices vs modular monolith
-
----
-
-## Assumptions & Open Questions
-
-### Assumptions
-
-> TODO: List key assumptions behind the design (e.g. provider SLAs, data consistency guarantees, etc.)
-
-### Open Questions
-
-> TODO: Questions for stakeholders that could change design decisions.
-
----
-
-## Appendix: Implementation Notes
-
-### Possible Tech Stack (Illustrative)
-
-> TODO: Suggested technologies for queues, DBs, services, monitoring, etc.
+> TODO: Call out where the design is intentionally simplified, or where further investment is needed (e.g. multi-region active-active).
 
 ### Future Enhancements
 
-> TODO: Ideas for future optimization or features beyond MVP.
+> TODO: Ideas like:
+> - Rules engine upgrade.
+> - More advanced ML-based send-time optimization.
+> - In-app inbox, richer analytics, etc.
+
+---
+
+## Appendix A: Sequence Diagrams
+
+### A.1 Sequence – Happy Path Notification
+
+![Sequence – Send Notification](./diagrams/sequence-send-notification.svg)
+
+> TODO: Explain major steps end-to-end.
+
+### A.2 Sequence – Failure & Fallback
+
+![Sequence – Failure & Fallback](./diagrams/sequence-failure-fallback.svg)
+
+> TODO: Explain SMS failure, retry, and fallback to email, including state transitions.
+
+---
+
+## Appendix B: Configuration Examples
+
+> TODO: to include example YAML/JSON for:
+> - Notification type definition.
+> - Channel priorities & fallbacks.
+> - Tenant-specific routing rules.
+
+---
+
+## Appendix C: Implementation Sketch
+
+### Illustrative Tech Choices
+
+> TODO: to mention candidate technologies (queues, DBs, frameworks) while keeping the design conceptually cloud/provider-agnostic.
+
+### Sample Pseudocode / Interfaces
+
+> TODO: Example interfaces for channel adapters, preference service, etc. (kept minimal but concrete).
 
 ---
