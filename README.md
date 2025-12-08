@@ -4,7 +4,7 @@
 
 ## Table of Contents
 
-1. [Problem Context & Requirements Recap](#problem-context--requirements-recap)
+1. [Problem Context & Requirements](#problem-context--requirements)
 2. [Assumptions](#assumptions)
 3. [Architecture Overview](#architecture-overview)
 4. [Key Architectural Decisions & Trade-offs](#key-architectural-decisions--trade-offs)
@@ -29,41 +29,134 @@
 
 ---
 
-## Problem Context & Requirements Recap
+## Problem Context & Requirements
 
 ### Business & System Context
 
-> TODO: Summarize the requirement to send large-scale, multi-channel notifications
-> (email, SMS, paper, future push), and the current siloed pain points.
+Modern digital platforms must communicate critical, time-sensitive, and personalized information to millions of users across diverse communication channels. These notifications may include usage insights, billing updates, anomaly alerts, recommendations, regulatory communications, and operational messages.
 
-### Functional Requirements (High-Level)
+Users may receive messages through:
+- **Email** (statements, reports, recommendations)
+- **SMS** (high-priority alerts, reminders)
+- **Paper mail** (for non-digital or compliance-driven communication)
+- **Push notifications** (for mobile or future app integrations)
+- **Additional channels** as needed (WhatsApp, voice, in-app inbox)
 
-> TODO: Bullet list – multi-channel, preference-aware routing, fallbacks,
-> unified API, provider integration, paper notification support, etc.
+In many organizations, notification logic evolves in a fragmented manner:
+- Each service integrates independently with email/SMS providers.
+- Channel logic becomes duplicated and inconsistent.
+- User preferences and routing logic diverge between systems.
+- Failures, retries, and fallbacks are handled differently across teams.
+- Adding a new channel requires invasive updates across multiple services.
+
+This leads to inconsistent user experience, operational inefficiency, high coupling between services and channels, scalability bottlenecks, and limited observability.
+
+A **centralized, channel-agnostic notification service** solves these challenges by offering:
+- A unified API for triggering notifications
+- Central routing, personalization, and fallback logic
+- Managed provider integrations
+- Horizontal scalability and fault isolation
+- Consistent observability and auditability
+- Reduced duplication and improved long-term maintainability
+
+
+### Functional Requirements
+
+- Provide a **unified, channel-agnostic API** to trigger notifications.
+- Support multiple delivery channels:
+  - Email, SMS, Paper, Push, and future channels.
+- Evaluate **user preferences** dynamically:
+  - Opt-in/opt-out
+  - Preferred channels per notification type
+  - Locale, timezone, DND windows
+- Support **channel prioritization and fallback** workflows.
+- Render **personalized templates** with dynamic data.
+- Manage templates per:
+  - Channel
+  - Locale
+  - Version
+  - Tenant
+- Integrate with multiple third-party providers per channel.
+- Handle provider failures:
+  - Retries
+  - Failovers
+  - Adaptive throttling
+- Track full delivery lifecycle:
+  - Sent, delivered, bounced, failed
+- Maintain event and audit logs for debugging and compliance.
+- Support **multi-tenant customization** of templates, routing rules, and quotas.
+- Support paper-mail workflows (batching, long-running jobs).
+
 
 ### Non-Functional Requirements
 
-- **Scalability**: Handle millions of notifications per day.
-- **Reliability**: Avoid drops/duplicates, robust retry & recovery.
-- **Performance**: Bounded end-to-end latency per channel.
-- **Maintainability**: Clean boundaries, pluggable channels/providers.
-- **Security & Compliance**: PII, consent, regulatory constraints.
+- **Scalability**  
+  - Handle millions of notifications/day.  
+  - Scale horizontally for API ingress, routing, and channel processing.  
+  - Avoid provider overload via rate limits and throttling.
 
-> TODO: Refine and expand as needed.
+- **Reliability**  
+  - At-least-once semantics with idempotency to prevent duplicates.  
+  - Robust failure handling, retries, fallback channels.  
+  - Durable audit logs capturing lifecycle state.
+
+- **Performance**  
+  - Low latency: SMS/push.  
+  - Moderate latency: email.  
+  - Batched latency acceptable: paper.  
+  - Efficient template rendering and preference lookups.
+
+- **Maintainability**  
+  - Clean separation: API → routing → channels → providers.  
+  - Channels/providers must be pluggable without core changes.  
+  - Configuration-driven rules wherever possible.
+
+- **Security & Compliance**  
+  - Protect PII and sensitive notification content.  
+  - Encrypt data in transit and at rest.  
+  - Enforce consent, opt-out, unsubscribe, DND, retention policies.  
+  - Ensure logs/metrics avoid leaking sensitive payloads.
+
+- **Observability**  
+  - Emit structured logs, metrics, and traces.  
+  - Dashboard visibility into queue depth, delivery success, provider errors.  
+  - Alerts for failure spikes, queue buildup, SLA breaches.
+
 
 ---
 
 ## Assumptions
 
-> This section explicitly calls out assumptions to ground the design.
+- **A1 – Asynchronous Delivery**  
+  Upstream systems do not require synchronous confirmation of delivery; they only need acknowledgment of request acceptance.
 
-- **A1**: TODO (e.g. upstream services can tolerate async delivery.)
-- **A2**: TODO (e.g. delivery guarantees: at-least-once vs exactly-once.)
-- **A3**: TODO (e.g. expected daily/peak notification volumes.)
-- **A4**: TODO (e.g. providers support webhooks for delivery status.)
-- **A5**: TODO (e.g. single cloud region vs multi-region initial rollout.)
+- **A2 – Delivery Semantics**  
+  System provides **at-least-once** delivery with idempotency guarantees to prevent duplicate notifications to end users.
 
-> TODO: Add/adjust assumptions as needed.
+- **A3 – Notification Volume**  
+  Expected load is millions of notifications/day, with burst patterns several times higher. Architecture must support horizontal scale.
+
+- **A4 – Provider Feedback**  
+  Third-party providers support webhooks/callbacks for delivery confirmations, failures, bounces, and rate-limit feedback.
+
+- **A5 – Initial Deployment Model**  
+  System is initially deployed in a single cloud region, but all components are stateless or partition-tolerant to allow future multi-region expansion.
+
+- **A6 – Centralized Preference Store**  
+  User preferences are stored centrally, are read-heavy, and require low-latency access (cache-backed or NoSQL).
+
+- **A7 – Deterministic Template Rendering**  
+  Rendered templates must be reproducible for auditing, debugging, and compliance.
+
+- **A8 – Channel Latency Classes**  
+  Only SMS/push channels require low-latency delivery; email and paper allow longer windows.
+
+- **A9 – Provider Rate Limits Exist**  
+  Providers impose quotas; the system must throttle or defer sends to avoid rejection or blacklisting.
+
+- **A10 – Payload Contains PII**  
+  Sensitive content may be included, requiring sanitization in logs, encryption for certain fields, and strict access control.
+
 
 ---
 
