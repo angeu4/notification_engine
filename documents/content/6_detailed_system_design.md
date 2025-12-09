@@ -39,7 +39,47 @@ POST /v1/notifications
 ```
 
 #### Diagram: API Flow
-![API Flow](./diagrams/api-flow.svg)
+
+```mermaid
+sequenceDiagram
+    participant Producer as Producer System
+    participant API as Notification API Gateway
+    participant Validate as Validation & Idempotency Layer
+    participant Orchestrator as Orchestration & Routing Engine
+    participant Prefs as Preference Service
+    participant Templates as Template Service
+    participant Queue as Channel Queue
+    participant Worker as Channel Worker
+    participant Provider as External Provider
+
+    Producer->>API: POST /v1/notifications
+(notificationType, userId, payload)
+    API->>Validate: Validate request
+Check idempotency key
+    Validate-->>API: Valid / Cached Response
+
+    API->>Orchestrator: Publish NotificationRequest event
+
+    Orchestrator->>Prefs: Fetch user preferences
+    Prefs-->>Orchestrator: Preferences
+
+    Orchestrator->>Orchestrator: Resolve channels & routing rules
+
+    Orchestrator->>Templates: Fetch template metadata
+    Templates-->>Orchestrator: Template metadata
+
+    Orchestrator->>Templates: Render template (locale, data)
+    Templates-->>Orchestrator: Rendered content
+
+    Orchestrator->>Queue: Enqueue ChannelAttempt
+    Queue-->>Worker: Deliver attempt (pull-based)
+
+    Worker->>Provider: Send formatted message
+    Provider-->>Worker: Accepted / Delivered / Bounced
+
+    Worker->>Orchestrator: Emit delivery event
+    Orchestrator->>Producer: Optional async callback (webhook)
+```
 
 ---
 

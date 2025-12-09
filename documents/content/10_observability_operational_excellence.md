@@ -213,9 +213,86 @@ After significant incidents:
 
 ### Observability Flow Diagram
 
-![Observability Flow](./diagrams/observability-flow.svg)
+```mermaid
+flowchart TD
 
-Diagram should illustrate:
+    subgraph Producers[Producer Systems]
+        Billing
+        Alerts
+        Insights
+    end
+
+    subgraph API[Notification API Layer]
+        Gateway[API Gateway]
+        Validator[Request Validator
++ Idempotency Layer]
+    end
+
+    Producers --> Gateway --> Validator
+
+    subgraph ORCH[Orchestration & Routing Service]
+        Router[Routing Engine]
+        TemplateSvc[Template Service]
+        PrefSvc[Preference Service]
+    end
+
+    Validator --> Router
+
+    %% Observability Outputs from Orchestrator
+    Router -->|Trace Spans| Traces[Tracing Backend]
+    Router -->|Metrics| Metrics[Metrics Store]
+    Router -->|Structured Logs| Logs[Log Aggregator]
+
+    %% Queue Layer
+    MQ[(Distributed Message Queues)]
+    Router --> MQ
+
+    MQ --> Workers
+
+    subgraph Workers[Channel Workers (SMS/Email/Paper/Push)]
+        W1[Worker 1]
+        W2[Worker 2]
+        WN[Worker N]
+    end
+
+    %% Workers → Observability
+    Workers -->|Worker Metrics
+(latency, throughput)| Metrics
+    Workers -->|Worker Spans| Traces
+    Workers -->|Structured Logs| Logs
+
+    %% Providers
+    subgraph Providers[External Providers]
+        ProviderSMS[SMS Provider]
+        ProviderEmail[Email Provider]
+        ProviderPush[Push Provider]
+    end
+
+    Workers --> Providers
+
+    %% Provider callbacks
+    Providers --> CallbackAPI[Provider Callback API]
+
+    CallbackAPI --> ORCH
+    CallbackAPI -->|Callback Logs| Logs
+    CallbackAPI -->|Callback Metrics| Metrics
+    CallbackAPI -->|Callback Traces| Traces
+
+    %% Monitoring & Alerting Layer
+    Metrics --> AlertsSys[Alerting System]
+    Logs --> AlertsSys
+    Traces --> AlertsSys
+
+    AlertsSys --> OnCall[SRE / On-Call Engineer]
+
+    %% Dashboards
+    Metrics --> Dashboards[Dashboards
+(Grafana, Kibana, etc.)]
+    Logs --> Dashboards
+    Traces --> Dashboards
+```
+
+The above diagram illustrates:
 - Logs, metrics, and traces emitted from API, routing, rendering, workers, and provider integrations  
 - Observability stack (Prometheus, Grafana, ELK, OpenTelemetry, etc.)  
 - Alerting and SLO evaluation paths  

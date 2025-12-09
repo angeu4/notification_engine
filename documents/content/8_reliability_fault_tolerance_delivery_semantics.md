@@ -157,8 +157,44 @@ A state machine ensures every notification and channel attempt transitions throu
 
 Each transition emits an audit event.
 
-#### Diagram Placeholder
-![Notification State Machine](./diagrams/notification-state-machine.svg)
+#### Diagram
+
+```mermaid
+stateDiagram-v2
+
+    [*] --> RECEIVED : NotificationRequest accepted
+
+    RECEIVED --> ROUTED : Preferences + routing rules resolved
+    ROUTED --> RENDERED : Templates fetched & rendered
+    ROUTED --> SUPPRESSED : User opt-out / DND / invalid channel
+(Suppression Path)
+
+    RENDERED --> QUEUED : ChannelAttempt enqueued
+    QUEUED --> SENDING : Worker pulls attempt
+
+    SENDING --> SENT : Provider accepted request
+    SENDING --> RETRY_PENDING : Retryable failure
+(5xx, timeout, throttling)
+    SENDING --> FAILED : Non-retryable failure
+(4xx, invalid payload)
+    SENDING --> FALLBACK_TRIGGERED : Primary failed & fallback enabled
+
+    RETRY_PENDING --> QUEUED : Retry backoff complete
+    RETRY_PENDING --> DLQ : Max retry attempts exceeded
+
+    FALLBACK_TRIGGERED --> QUEUED : Enqueue fallback ChannelAttempt
+
+    SENT --> DELIVERED : Provider callback = success
+    SENT --> BOUNCED : Provider callback = hard bounce or blocked
+    SENT --> UNKNOWN : No callback received within SLA window
+
+    FAILED --> DLQ : Hard failure path
+    BOUNCED --> DLQ : Bounce resolution path
+
+    DELIVERED --> [*]
+    SUPPRESSED --> [*]
+    DLQ --> [*]
+```
 
 ---
 

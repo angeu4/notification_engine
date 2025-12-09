@@ -157,11 +157,94 @@ Capacity planning inputs:
 
 ---
 
-### Scalability Diagram (Conceptual)
+### Scalability Diagram
 
-![Scalability Data Flow](./diagrams/scalability-data-flow.svg)
+```mermaid
+flowchart TD
 
-Diagram should illustrate:
+    subgraph Producers[Producers]
+        Billing
+        Alerts
+        Insights
+        Analytics
+    end
+
+    Producers --> API[Notification API Gateway]
+
+    API --> LB[Load Balancer / Autoscaling Frontend]
+    LB --> ORCH[Orchestration Service]
+
+    subgraph Routing[Routing Components]
+        Prefs[Preference Cache]
+        Rules[Routing Rules Store]
+        Templates[Template Cache]
+    end
+
+    ORCH --> Prefs
+    ORCH --> Rules
+    ORCH --> Templates
+
+    ORCH --> MQ[(Channel Queues - Distributed Message Broker)]
+
+    subgraph SMSGroup[SMS Worker Pool]
+        SMS1[SMS Worker 1]
+        SMS2[SMS Worker 2]
+        SMSN[SMS Worker N (Autoscaled)]
+    end
+
+    subgraph EmailGroup[Email Worker Pool]
+        EM1[Email Worker 1]
+        EM2[Email Worker 2]
+        EMN[Email Worker N (Autoscaled)]
+    end
+
+    MQ --> SMSGroup
+    MQ --> EmailGroup
+
+    SMSGroup --> SMSProv[(SMS Providers - Twilio/Nexmo)]
+    EmailGroup --> EmailProv[(Email Providers - SendGrid/AWS SES)]
+
+    subgraph Scaling[Scaling Intelligence]
+        QDepth[Queue Depth Monitor]
+        WLag[Worker Lag Monitor]
+        RPS[Throughput Analyzer]
+    end
+
+    QDepth --> HPA[Horizontal Pod Autoscaler]
+    WLag --> HPA
+    RPS --> HPA
+
+    HPA --> SMSGroup
+    HPA --> EmailGroup
+
+    subgraph Stores[Data Stores]
+        KV[(KV Store - Preferences)]
+        RDB[(Relational DB)]
+        Cache[(Distributed Cache)]
+        Logs[(Event/Log Store)]
+    end
+
+    ORCH --> KV
+    ORCH --> RDB
+    ORCH --> Cache
+    SMSGroup --> Logs
+    EmailGroup --> Logs
+
+    subgraph Obs[Observability]
+        Metrics
+        Traces
+        AlertsSys[Alerting System]
+    end
+
+    ORCH --> Metrics
+    SMSGroup --> Metrics
+    EmailGroup --> Metrics
+
+    Metrics --> AlertsSys
+    Traces --> AlertsSys
+```
+
+The above diagram illustrates:
 - API layer scaling independently  
 - Orchestration service horizontally scalable  
 - Per-channel queues  

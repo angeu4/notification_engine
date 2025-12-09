@@ -121,7 +121,91 @@ These events form a full audit trail and power observability.
 
 ### Diagram: Domain Model / ER
 
-![Domain Model ER](./diagrams/domain-model-er.svg)
+```mermaid
+erDiagram
+
+    USER {
+        string userId PK
+        string email
+        string phone
+        string locale
+    }
+
+    USER_PREFERENCES {
+        string preferenceId PK
+        string userId FK
+        string notificationType
+        boolean optOut
+        string[] preferredChannels
+        string dndStart
+        string dndEnd
+    }
+
+    NOTIFICATION_REQUEST {
+        string requestId PK
+        string userId FK
+        string notificationType
+        json payload
+        string locale
+        string priority
+        string idempotencyKey
+        datetime createdAt
+    }
+
+    CHANNEL_ATTEMPT {
+        string attemptId PK
+        string requestId FK
+        string channel
+        string provider
+        string status
+        int retryCount
+        datetime createdAt
+        datetime updatedAt
+    }
+
+    TEMPLATE {
+        string templateId PK
+        string channel
+        string locale
+        int version
+        string subject
+        string body
+    }
+
+    ROUTING_RULE {
+        string ruleId PK
+        string notificationType
+        string[] allowedChannels
+        string[] channelPriority
+        boolean fallbackEnabled
+    }
+
+    PROVIDER_CONFIG {
+        string providerId PK
+        string channel
+        string name
+        string endpoint
+        int maxRps
+        int fallbackPriority
+    }
+
+    TENANT {
+        string tenantId PK
+        string name
+    }
+
+    %% Relationships
+
+    USER ||--o{ USER_PREFERENCES : "has"
+    USER ||--o{ NOTIFICATION_REQUEST : "receives"
+    NOTIFICATION_REQUEST ||--o{ CHANNEL_ATTEMPT : "produces"
+    TEMPLATE ||--o{ NOTIFICATION_REQUEST : "renders-for"
+    ROUTING_RULE ||--o{ NOTIFICATION_REQUEST : "applies-to"
+    PROVIDER_CONFIG ||--o{ CHANNEL_ATTEMPT : "used-by"
+    TENANT ||--o{ USER : "owns"
+    TENANT ||--o{ TEMPLATE : "overrides"
+    TENANT ||--o{ ROUTING_RULE : "customizes"
+```
 
 **Recommended relationships to include in the diagram:**
 
