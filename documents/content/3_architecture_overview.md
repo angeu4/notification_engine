@@ -68,7 +68,74 @@ Overall, the design ensures:
 
 ### Diagram: High-Level System Architecture
 
-![High-Level Architecture](./diagrams/high-level-architecture.svg)
+```mermaid
+flowchart LR
+    subgraph Producers[Producer Systems]
+        Billing
+        Insights
+        Alerts
+        Analytics
+    end
+
+    Producers --> API[Unified Notification API / Gateway]
+
+    API --> ORCH[Orchestration & Routing Service]
+
+    ORCH --> Prefs[User Preferences Service]
+    ORCH --> Templates[Template Service]
+
+    ORCH -->|SMS| SMSQ[SMS Queue]
+    ORCH -->|Email| EmailQ[Email Queue]
+    ORCH -->|Paper| PaperQ[Paper Queue]
+    ORCH -->|Push| PushQ[Push Queue]
+
+    subgraph Channels[Channel Services]
+        SMSWorker[SMS Channel Service]
+        EmailWorker[Email Channel Service]
+        PaperWorker[Paper Channel Service]
+        PushWorker[Push Channel Service]
+    end
+
+    SMSQ --> SMSWorker
+    EmailQ --> EmailWorker
+    PaperQ --> PaperWorker
+    PushQ --> PushWorker
+
+    subgraph Providers[Third-Party Providers]
+        Twilio
+        Nexmo
+        SendGrid
+        AWS_Printers[Print/Mail Provider]
+        PushVendor[Push Provider]
+    end
+
+    SMSWorker --> Twilio
+    SMSWorker --> Nexmo
+    EmailWorker --> SendGrid
+    PaperWorker --> AWS_Printers
+    PushWorker --> PushVendor
+
+    subgraph Observability[Observability Layer]
+        Logs
+        Metrics
+        Traces
+    end
+
+    ORCH --> Observability
+    Channels --> Observability
+
+    subgraph Storage[Data Stores]
+        RelDB[(Relational DB)]
+        KV[(User Prefs KV Store)]
+        LogStore[(Event/Log Store)]
+        Cache[(Cache)]
+    end
+
+    ORCH --> RelDB
+    ORCH --> KV
+    ORCH --> Cache
+    Channels --> LogStore
+```
 
 The high-level architecture diagram illustrates:
 
