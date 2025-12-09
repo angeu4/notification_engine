@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Security, Privacy & Compliance](9_security_privacy_compliance.md)
+
 ## Observability & Operational Excellence
 
 This section describes how the notification platform provides deep visibility into system behavior, delivery success, provider health, performance bottlenecks, failures, and operational risks.  
@@ -219,4 +221,6 @@ Diagram should illustrate:
 - Alerting and SLO evaluation paths  
 
 ---
+[→ Next page: Extensibility & Multi-tenancy](11_extensibility_multi_tenancy.md)
+
 [← Table of Contents](../../README.md)

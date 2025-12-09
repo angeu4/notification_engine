@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Architecture Overview](3_architecture_overview.md)
+
 ## Key Architectural Decisions & Trade-offs
 
 This section outlines the major architectural decisions that shape the design of the notification service.  
@@ -264,4 +266,6 @@ Use **hybrid rendering**:
 
 
 ---
+[→ Next page: Core Domain Model](5_core_domain_model.md)
+
 [← Table of Contents](../../README.md)

@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Risks, Lmitations, and Trade-Offs](../content/12_risks_limitations_future_enhancements.md)
+
 ## Appendix A: Sequence Diagrams
 
 This appendix provides sequence diagrams illustrating the end-to-end flows of the notification platform.  
@@ -196,4 +198,6 @@ sequenceDiagram
 ```
 
 ---
+[→ Next page: Appendix B: Configuration Examples](b_configuration_examples.md)
+
 [← Table of Contents](../../README.md)

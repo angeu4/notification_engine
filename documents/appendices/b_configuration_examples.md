@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Appendix A: Sequence Diagrams](a_sequence_diagrams.md)
+
 ## Appendix B: Configuration Examples
 
 This appendix provides configuration samples used by different components of the notification platform.  
@@ -221,4 +223,6 @@ featureFlags:
 ```
 
 ---
+[→ Next page: Appendix C: Implementation Sketch](c_implementation_sketch.md)
+
 [← Table of Contents](../../README.md)

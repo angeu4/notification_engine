@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Scalability & Performance](7_scalability_performance.md)
+
 ## Reliability, Fault Tolerance & Delivery Semantics
 
 This section describes how the notification platform guarantees reliable delivery, handles provider/service failures, manages retries and fallbacks, and ensures auditability.  
@@ -236,4 +238,6 @@ SLIs & SLOs recommended:
 - DLQ accumulation < threshold
 
 ---
+[→ Next page: Security, Privacy & Compliance](9_security_privacy_compliance.md)
+
 [← Table of Contents](../../README.md)

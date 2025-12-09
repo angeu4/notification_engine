@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Assumptions](2_assumptions.md)
+
 ## Architecture Overview
 
 This section provides a bird’s-eye view of the system and its main components.
@@ -101,4 +103,6 @@ The high-level architecture diagram illustrates:
   Metrics, logs, and traces feeding monitoring dashboards and alerting systems.
 
 ---
+[→ Next page: Key Architectural Decisions & Trade-offs](4_key_architectural_decisions_trade_offs.md)
+
 [← Table of Contents](../../README.md)

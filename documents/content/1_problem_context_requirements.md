@@ -95,4 +95,6 @@ A **centralized, channel-agnostic notification service** solves these challenges
 
 
 ---
+[→ Next page: Assumptions](2_assumptions.md)
+
 [← Table of Contents](../../README.md)

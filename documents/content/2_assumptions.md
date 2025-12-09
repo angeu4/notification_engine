@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Problem Context & Requirements](1_problem_context_requirements.md)
+
 ## Assumptions
 
 - **A1 – Asynchronous Delivery**  
@@ -34,4 +36,6 @@
 
 
 ---
+[→ Next page: Architecture Overview](3_architecture_overview.md)
+
 [← Table of Contents](../../README.md)

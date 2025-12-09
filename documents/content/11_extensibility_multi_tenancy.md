@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Observability & Operational Excellence](10_observability_operational_excellence.md)
+
 ## Extensibility & Multi-Tenancy
 
 This section describes how the notification platform supports future growth, new channels, new providers, tenant-specific customization, and evolving configuration needs without requiring major architectural changes or service downtime.
@@ -217,4 +219,6 @@ All with **zero changes** required to existing channels or producer systems.
 This ensures the platform can evolve for years without architectural rewrites.
 
 ---
+[→ Next page: Risks, Limitations, and Future Enhancements](12_risks_limitations_future_enhancements.md)
+
 [← Table of Contents](../../README.md)

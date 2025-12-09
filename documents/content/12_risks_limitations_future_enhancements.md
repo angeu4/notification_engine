@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Extensibility & Multi-Tenancy](11_extensibility_multi_tenancy.md)
+
 ## Risks, Limitations & Future Enhancements
 
 This section outlines the architectural risks, operational limitations, and areas of future improvement for the notification platform.  
@@ -202,4 +204,6 @@ Analyze:
 Adjust routing dynamically to minimize spend.
 
 ---
+[→ Next page: Appendix A: Sequence Diagrams](../appendices/a_sequence_diagrams.md)
+
 [← Table of Contents](../../README.md)

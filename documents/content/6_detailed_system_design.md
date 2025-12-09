@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Core Domain Model](5_core_domain_model.md)
+
 ## Detailed System Design
 
 This section breaks down the major subsystems of the notification platform, how they interact, and the design principles behind each.  
@@ -198,4 +200,6 @@ Used for:
 - Audit logs retained based on compliance needs.
 
 ---
+[→ Next page: Scalability & Performance](7_scalability_performance.md)
+
 [← Table of Contents](../../README.md)

@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Detailed System Design](6_detailed_system_design.md)
+
 ## Scalability & Performance
 
 This section outlines how the notification platform scales to handle millions of notifications per day while maintaining predictable performance and low operational overhead.  
@@ -169,4 +171,6 @@ Diagram should illustrate:
 
 
 ---
+[→ Next page: Reliability, Fault Tolerance & Delivery Semantics](8_reliability_fault_tolerance_delivery_semantics.md)
+
 [← Table of Contents](../../README.md)

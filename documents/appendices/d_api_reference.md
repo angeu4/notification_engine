@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Appendix C: Implementation Sketch](c_implementation_sketch.md)
+
 ## Appendix D: API Reference
 
 This appendix defines a complete, production-grade API specification for the Notification Platform.  

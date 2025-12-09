@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Appendix B: Configuration Examples](b_configuration_examples.md)
+
 ## Appendix C: Implementation Sketch
 
 This appendix provides a lightweight implementation-oriented sketch illustrating how key components of the notification platform may be structured in code.  
@@ -240,4 +242,6 @@ def emit_event(event_type, entity_id, metadata):
 ```
 
 ---
+[→ Next page: Appendix D: API Reference](d_api_reference.md)
+
 [← Table of Contents](../../README.md)

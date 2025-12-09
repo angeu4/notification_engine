@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Reliability, Fault Tolerance & Delivery Semantics](8_reliability_fault_tolerance_delivery_semantics.md)
+
 ## Security, Privacy & Compliance
 
 This section outlines the security controls, privacy protections, and compliance requirements necessary for a large-scale notification platform that processes sensitive user information. Security measures apply across ingress, routing, storage, rendering, and delivery components.
@@ -201,4 +203,6 @@ Audit logs must be:
 - Ensure observable signals (logs/metrics/traces) contain zero sensitive content.  
 
 ---
+[→ Next page: Observability & Operational Excellence](10_observability_operational_excellence.md)
+
 [← Table of Contents](../../README.md)

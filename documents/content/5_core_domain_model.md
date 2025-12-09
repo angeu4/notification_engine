@@ -1,5 +1,7 @@
 [← Table of Contents](../../README.md)
 
+[← Previous page: Key Architectural Decisions & Trade-offs](4_key_architectural_decisions_trade_offs.md)
+
 ## Core Domain Model
 
 This section defines the core entities, relationships, and abstractions underlying the notification system.  
@@ -161,4 +163,6 @@ These events form a full audit trail and power observability.
   Ensures new channels require minimal modifications.
 
 ---
+[→ Next page: Detailed System Design](6_detailed_system_design.md)
+
 [← Table of Contents](../../README.md)
