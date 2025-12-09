@@ -249,7 +249,7 @@ flowchart TD
 
     MQ --> Workers
 
-    subgraph Workers[Channel Workers (SMS/Email/Paper/Push)]
+    subgraph Workers[Channel Workers for SMS/Email/Paper/Push]
         W1[Worker 1]
         W2[Worker 2]
         WN[Worker N]
@@ -257,7 +257,7 @@ flowchart TD
 
     %% Workers → Observability
     Workers -->|Worker Metrics
-(latency, throughput)| Metrics
+like latency, throughput| Metrics
     Workers -->|Worker Spans| Traces
     Workers -->|Structured Logs| Logs
 
@@ -287,7 +287,7 @@ flowchart TD
 
     %% Dashboards
     Metrics --> Dashboards[Dashboards
-(Grafana, Kibana, etc.)]
+like Grafana, Kibana, etc.]
     Logs --> Dashboards
     Traces --> Dashboards
 ```

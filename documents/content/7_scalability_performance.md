@@ -189,13 +189,13 @@ flowchart TD
     subgraph SMSGroup[SMS Worker Pool]
         SMS1[SMS Worker 1]
         SMS2[SMS Worker 2]
-        SMSN[SMS Worker N (Autoscaled)]
+        SMSN[SMS Autoscaled Worker N]
     end
 
     subgraph EmailGroup[Email Worker Pool]
         EM1[Email Worker 1]
         EM2[Email Worker 2]
-        EMN[Email Worker N (Autoscaled)]
+        EMN[Email Autoscaled Worker N]
     end
 
     MQ --> SMSGroup

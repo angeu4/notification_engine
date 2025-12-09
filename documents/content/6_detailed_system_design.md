@@ -53,9 +53,7 @@ sequenceDiagram
     participant Provider as External Provider
 
     Producer->>API: POST /v1/notifications
-(notificationType, userId, payload)
     API->>Validate: Validate request
-Check idempotency key
     Validate-->>API: Valid / Cached Response
 
     API->>Orchestrator: Publish NotificationRequest event
@@ -78,6 +76,7 @@ Check idempotency key
     Provider-->>Worker: Accepted / Delivered / Bounced
 
     Worker->>Orchestrator: Emit delivery event
+
     Orchestrator->>Producer: Optional async callback (webhook)
 ```
 
